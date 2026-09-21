@@ -1,69 +1,120 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<title>EXIF Viewer</title>
-<style>
-    body {
-        font-family: system-ui, sans-serif;
-        background: #111;
-        color: #fff;
-        padding: 20px;
-    }
-    img {
-        max-width: 100%;
-        margin-top: 15px;
-        border-radius: 10px;
-    }
-    .box {
-        background: #1c1c1c;
-        padding: 15px;
-        border-radius: 10px;
-        margin-top: 15px;
-        white-space: pre-wrap;
-        font-size: 14px;
-    }
-    input {
-        margin-top: 10px;
-    }
-</style>
+    <meta charset="UTF-8">
+    <!-- บังคับแนวนอนและป้องกันการซูม สเกลให้พอดีกับจอ iPhone -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>C++ 3D Mobile Sandbox</title>
+    <style>
+        :root {
+            --bg-color: #0f111a;
+            --panel-bg: rgba(21, 25, 40, 0.85);
+            --accent: #00e5ff;
+            --text-main: #e0e6ed;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', monospace; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden; /* ห้ามเลื่อนหน้าจอ */
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+        }
+
+        /* พื้นที่ 3D เต็มจออยู่ด้านหลัง */
+        #viewport-3d {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #1a1e2d 0%, #0f111a 100%);
+            z-index: 1;
+        }
+
+        /* แถบเครื่องมือด้านบน (Run, Stop) */
+        #top-bar {
+            position: absolute;
+            top: env(safe-area-inset-top, 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 15px;
+            background: var(--panel-bg);
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 1px solid #2a3143;
+            backdrop-filter: blur(5px);
+        }
+
+        button {
+            background: none; border: none; color: white;
+            font-size: 16px; font-weight: bold; padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        .btn-run { color: #00e5ff; }
+        .btn-stop { color: #ff3366; }
+
+        /* แผง Code Editor ด้านล่าง (สามารถทำแอนิเมชันเลื่อนขึ้นลงได้) */
+        #bottom-editor {
+            position: absolute;
+            bottom: env(safe-area-inset-bottom, 0);
+            left: env(safe-area-inset-left, 0);
+            right: env(safe-area-inset-right, 0);
+            height: 45%; /* กินพื้นที่ครึ่งล่าง */
+            background: var(--panel-bg);
+            border-top: 2px solid var(--accent);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #code-area {
+            flex-grow: 1;
+            background: transparent;
+            color: #a6accd;
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+        }
+
+        #console-area {
+            height: 30px;
+            background: #111424;
+            color: #00e5ff;
+            font-size: 12px;
+            padding: 5px 10px;
+            border-top: 1px solid #2a3143;
+        }
+    </style>
 </head>
 <body>
 
-<h2>📸 EXIF Viewer (Read Only)</h2>
-<input type="file" accept="image/*" id="upload">
+    <!-- พื้นที่แสดงผล 3D (เดี๋ยวเราจะเอา Three.js มาใส่ตรงนี้) -->
+    <div id="viewport-3d"></div>
 
-<img id="preview">
-<div class="box" id="exif">ยังไม่ได้เลือกรูป</div>
+    <!-- ปุ่มควบคุม -->
+    <div id="top-bar">
+        <button class="btn-run">▶ RUN</button>
+        <button class="btn-stop">⏹ STOP</button>
+        <button>↻ RESET</button>
+    </div>
 
-<!-- EXIF Library -->
-<script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <!-- ส่วนเขียนโค้ดและคอนโซล -->
+    <div id="bottom-editor">
+        <textarea id="code-area" spellcheck="false">// ยินดีต้อนรับสู่ C++ 3D Sandbox
+// พิมพ์โค้ดของคุณที่นี่...
 
-<script>
-document.getElementById('upload').addEventListener('change', function (e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const img = document.getElementById('preview');
-    img.src = URL.createObjectURL(file);
-
-    img.onload = function () {
-        EXIF.getData(img, function () {
-            let output = '';
-            const tags = EXIF.getAllTags(this);
-
-            if (Object.keys(tags).length === 0) {
-                output = '❌ ไม่พบข้อมูล EXIF ในรูปนี้';
-            } else {
-                for (let key in tags) {
-                    output += `${key}: ${tags[key]}\n`;
-                }
-            }
-            document.getElementById('exif').textContent = output;
-        });
-    };
-});
-</script>
+int main() {
+    
+    return 0;
+}</textarea>
+        <div id="console-area">> System Ready. WASM Initialized.</div>
+    </div>
 
 </body>
 </html>
